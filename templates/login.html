@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="./resource/linkicon.ico">
+
+    <title>Pass Vault</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='table.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='materialize.css') }}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='form-validation.css') }}" rel="stylesheet">
+  </head>
+
+  <body class="bg-light">
+    <nav class="navbar navbar-default navbar-light bg-light">
+  <a class="navbar-brand" href="/login">PassVault</a>
+  
+  <a class="  pull-right" href="/logout"><i class="material-icons exit_to_app">exit_to_app</i></a>
+ 
+</nav>
+        <div class="fixed-action-btn">
+              <a class="btn-floating btn-large red">
+                <i class="large material-icons">mode_edit</i>
+              </a>
+                <ul>
+                  <li><a class="btn-floating red"><i class="material-icons add">add</i></a></li>
+                  <li><a class="btn-floating yellow darken-1"><i class="material-icons search">search</i></a></li>
+                  <li><a class="btn-floating green darken-1"><i class="material-icons note_add">note_add</i></a></li>
+                </ul>
+        </div>
+    <div class="container">
+      <div class="alert alert-danger" role="alert" id="AddcredsAlert">  sample text </div>
+                    <div class="row" name="User_register_form">
+                    <div class="col-md-12">
+                    <div class="row collapse" id="collapseExample">
+                      <div class="col-md-8 order-md-1">
+                        <div class="alert alert-danger" role="alert" id="AddcredsAlert">  sample text </div>
+                        <form class="needs-validation" novalidate="" method="POST" action="" id="Addcreds">
+                          <div class="mb-3">
+                            <label for="username">UserID</label>
+                            <div class="input-group mb-2">
+                              <input type="text" class="form-control" id="username" name="username" placeholder="username" required="">                
+                              <div class="invalid-feedback" style="width: 100%;">
+                                Your UserID is required.
+                              </div>
+                            </div>
+                            <br>
+                            <div class="input-group mb-2"><input type="password" class="form-control" id="password" name="password" placeholder="password" required=""></div>
+                              <br>
+                              <div class="input-group mb-2"><input type="text" class="form-control" id="domain" name="domain" placeholder="domain" required=""></div>
+                          </div>
+                          <hr class="mb-2">
+                          <button class="btn btn-primary btn-sm " type="submit">Register</button>
+                            </form>
+                          </div>
+                          <div class="mb-4"></div>
+                        </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                  <div class="col-md-12">
+                  <div class="row collapse" id="getListdiv" >
+                    <div class="col-md-8 order-md-1">
+                      <div class="alert alert-danger" role="alert" id="getListAlert">  get list of items </div>
+                      <form class="needs-validation"  method="POST" action="" id="getList">
+                        <div class="mb-3">
+                          <label for="email">search Domain <span class="text-muted"></span></label>
+                          <input type="text" class="form-control" id="searchdomain" name="searchdomain" placeholder="domain">
+                          <div class="invalid-feedback">
+                            Please enter a valid domain.
+                          </div>
+                        </div>
+                        <hr class="mb-2">
+                        <button class="btn btn-primary btn-sm " type="submit">get details</button>
+                        <div class="mb-2"></div>
+                      </form>
+                    </div>
+                    
+                  </div>
+                  </div>
+                  </div>
+                  <div class="row collapse" id="getnotesdiv" >
+                  <form class="needs-validation"  method="POST" action="" id="postnotes">
+                    <div class="form-group">
+                      <label for="note_title"><Title></Title></label>
+                      <input type="text" class="form-control" id="note_title" name="note_title"placeholder="My Secret note">
+                    </div>
+                    <div class="form-group">
+                      <label for="note_text">Example textarea</label>
+                      <textarea class="form-control" id="note_text" name="note_text" rows="5"></textarea>
+                    </div>
+                    <button class="btn btn-primary btn-sm " type="submit">Submit</button>
+                  </form>
+                </div>
+                  <div class="row" id="cardlist"></div>
+    </div>
+     <script src="{{ url_for('static', filename='table.js') }}"></script>
+    <script src="{{ url_for('static', filename='materialize.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='Jquery.3.2.1.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-table.min.js') }}"></script>
+    <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function() {
+        'use strict';
+
+        window.addEventListener('load', function() {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.getElementsByClassName('needs-validation');
+
+          // Loop over them and prevent submission
+          var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+              if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
+        }, false);
+      })();
+    </script>
+
+<script>
+$( document ).ready(function() {
+    $(".alert").hide();
+    $( "#Addcreds" ).submit(function( event ) {
+    event.preventDefault();
+    var formData=$(this).serialize();
+    var xhr=callEndpoint("/addcreds","#AddcredsAlert",'#collapseExample',formData,true);
+    jQuery('#collapseExample').collapse("toggle");
+    });
+    var initobj={'searchdomain':'all'};
+    var xhr=getList("/getlist","#getListAlert",'#getList',initobj); 
+    jQuery('#getList').collapse("show");
+    var elems = document.querySelectorAll('.fixed-action-btn');
+    var instances = M.FloatingActionButton.init(elems, {
+      direction: 'left',
+      hoverEnabled: true
+    });
+
+    $('.material-icons').on('click',function(e){
+      if($(e.target).hasClass('add')){
+        jQuery('#collapseExample').collapse("toggle");
+        jQuery('#getListdiv').collapse("hide");
+        jQuery('#getnotesdiv').collapse("hide");
+      }
+      else if($(e.target).hasClass('search')){
+        jQuery('#getListdiv').collapse("toggle");
+        jQuery('#collapseExample').collapse("hide");
+        jQuery('#getnotesdiv').collapse("hide");
+      }
+      else if($(e.target).hasClass('note_add')){
+        jQuery('#getListdiv').collapse("hide");
+        jQuery('#collapseExample').collapse("hide");
+        jQuery('#getnotesdiv').collapse("toggle");
+      }
+    }); 
+  $("#getList" ).submit(function( event ) {
+    event.preventDefault();
+    var formData=$(this).serialize();
+    var xhr=getList("/getlist","#getListAlert",'#getListdiv',formData); 
+    jQuery('#getListdiv').collapse("toggle"); 
+    });
+    $("#postnotes" ).submit(function( event ) {
+    event.preventDefault();
+    var formData=$(this).serialize();
+    callEndpoint("/postnotes","#GlobalAlert",null,formData,true); 
+    jQuery('#getnotesdiv').collapse("toggle");
+    });
+  $('#cardlist').on('click','i',function(e){
+      if($(e.target).hasClass('copy')){
+        var targetid=$(e.target).attr('data-clipboard-target');
+        $temp=$('#'+targetid);
+        copyToClipboard($temp)
+      }
+      else if($(e.target).hasClass('secret')){
+        //var pw=$('div.'+this.id).attr('name');
+        var targetid=$(e.target).attr('data-clipboard-target');
+        var pw=$('#'+targetid).val();
+        if($('div.'+this.id).text()=='*************'){
+          $('div.'+this.id).text(pw);
+        }
+        else{
+          $('div.'+this.id).text('*************');
+        }
+        
+      }
+      else{
+        console.log(e.target);
+      }
+
+function copyToClipboard(element) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).val()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+});
+
+$('#cardlist').on('click','.close',function(e) {
+  console.log(e);
+  var domain=$(e.target).attr('domain');
+  var id=$(e.target).attr('id');
+  var dataobject={'domain':domain,'name':id};
+  console.log(dataobject);
+  callEndpoint("/delete","#GlobalAlert",null,dataobject,true);
+})
+
+});
+  function callEndpoint(url,alertclass,collapseclass,databject,fillmode=null){
+    var xhr = $.post( url,databject, function() {
+    console.log("Action performed");
+    })
+          .done(function(data) {
+            $(alertclass).attr("class","alert alert-success");
+            $(alertclass).text("Success").show().delay(5000).fadeOut(800);
+            console.log(data);
+            if(fillmode){
+              cardfill(data);
+            }
+          })
+          .fail(function(xhr,errortext,errorthrown) {
+              $(alertclass).attr("class","alert alert-danger");  
+              $(alertclass).text(xhr.responseText).show().delay(10000).fadeOut(800);
+          })
+          .always(function(data){
+            if(collapseclass!=null){
+            jQuery(collapseclass).collapse('toggle');
+            }
+          });
+  }
+
+function cardfill(arrayobj){
+  var i=100;
+  $('#cardlist').empty();
+arrayobj.forEach(element => {
+  console.log(element.domain);
+  var out='<div class="col-md-4">'
+  out+='<div class="card mb-4" style="width: 18rem;">';
+  out+='<div class="card-header">'+element.domain+'<button class="close"><span domain="'+element.domain+'" id="'+element.cred_name+'" aria-hidden="true">&times;</span></button></div>';
+    out+='<div class="card-body bg-light text-black"><p class="card-text" ><h7>';
+    out+='Username: '+element.cred_name+'</h7></p>';
+    out+='<div class="row">Password:<div class="'+i+'" name='+"tt1"+'>*************</div><a href="#"><i '+' id='+i+' data-clipboard-target=B'+i+' class="secret material-icons view">preview</i></a>';
+    out+='<input id="B'+i+'" type="hidden" value="'+'x'+'"></input>';
+    out+='<a href="#" class="btn-disabled"><i '+' id=C'+i+' data-clipboard-target=B'+i+' class="material-icons copy">file_copy</i></a></div>'
+    out+='</div></div></div>';
+  $('#cardlist').append(out);
+  $('#B'+i).val(htmlEntities(element.cred_secret));
+  i=i+1;
+});
+}
+
+function htmlEntities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function getList(url,alertclass,collapseclass,dataobject){
+    var xhr = $.get( url,dataobject, function() {
+    console.log("Action performed");
+    })
+          .done(function(data1) {
+            $(alertclass).attr("class","alert alert-success");
+            $(alertclass).text("Sucess").show().delay(3000).fadeOut(800);
+
+            if(!data1.length){
+              $(alertclass).attr("class","alert alert-info");  
+              $(alertclass).text("No data").show().delay(5000).fadeOut(800);
+            }
+            cardfill(data1);
+           
+          })
+          .fail(function(xhr,errortext,errorthrown) {
+              $(alertclass).attr("class","alert alert-danger");  
+              $(alertclass).text(xhr.responseText).show().delay(10000).fadeOut(800);
+          })
+          .always(function(data){
+            jQuery(collapseclass).collapse('toggle');
+          });
+  }
+
+</script>
+</body>
+</html>
