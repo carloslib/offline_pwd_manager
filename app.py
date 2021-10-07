@@ -172,4 +172,4 @@ def store_note():
         return redirect(url_for('logout'))
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = 'the random string'   
-    app.run(host ='0.0.0.0', port = 5001,debug=True)
+    app.run(host ='0.0.0.0', port = os.environ['PORT'],debug=True)
